@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  vpc:
+    Type: String
+  public-sg:
+    Type: String
+  private-sg:
+    Type: String
+  public-subnet:
+    Type: String
+  private-subnet:
+    Type: String
+  image-id:
+    Type: String
+    Default: ami-0866a3c8686eaeeba
+  instance-name:
+    Type: String
+    Default: dacn-ec2-instance
+  keypair:
+    Type: String
+    Default: dacn-keypair
+
+Resources:
+  fe-instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      SubnetId: !Ref public-subnet
+      SecurityGroupIds:
+        - !Ref public-sg
+      KeyName: !Ref keypair
+      ImageId: !Ref image-id
+      Tags:
+        - Key: Name
+          Value: !Ref instance-name
+
+  services-1-instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: !Ref image-id
+      NetworkInterfaces:
+        - GroupSet:
+          - !Ref private-sg
+          AssociatePublicIpAddress: 'true'
+          DeleteOnTermination: 'true'
+          DeviceIndex: '0'
+          SubnetId: !Ref private-subnet
+      KeyName: !Ref keypair
+      Tags:
+        - Key: Name
+          Value: !Ref instance-name

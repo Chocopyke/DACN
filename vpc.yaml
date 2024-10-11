@@ -1,0 +1,193 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  vpc-cidr:
+    Type: String
+    Default: 10.10.0.0/16
+  public-subnet-cidr:
+    Type: String
+    Default: 10.10.1.0/24
+  private-subnet-cidr:
+    Type: String
+    Default: 10.10.2.0/24
+  region-cidr:
+    Type: String
+    Default: 18.206.107.24/29
+  proj-name:
+    Type: String
+    Default: cf-dacn
+
+Resources:
+# Create VPC
+  vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref vpc-cidr
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+      - Key: Name
+        Value: !Ref proj-name
+
+# Create Security Group for VPC
+  default-sg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref vpc
+      Tags:
+      - Key: Name
+        Value: !Ref proj-name
+      SecurityGroupIngress:
+      - IpProtocol: -1
+        FromPort: -1
+        ToPort: -1
+        CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+      - IpProtocol: -1
+        FromPort: -1
+        ToPort: -1
+        CidrIp: 0.0.0.0/0
+
+  public-sg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref vpc
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: !Ref region-cidr
+
+  private-sg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref vpc
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        SourceSecurityGroupId: !Ref public-sg
+      - IpProtocol: icmp
+        FromPort: -1
+        ToPort: -1
+        SourceSecurityGroupId: !Ref public-sg
+
+# Create Public Subnet and Private Subnet
+  public-subnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Ref public-subnet-cidr
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+      - Key: Name
+        Value: !Ref proj-name
+
+  private-subnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Ref private-subnet-cidr
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+      - Key: Name
+        Value: !Ref proj-name
+
+# Create Internet Gateway and attach it to VPC
+  internet-gateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+      - Key: Name
+        Value: !Ref proj-name
+
+  attach-gateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref vpc
+      InternetGatewayId: !Ref internet-gateway
+
+# Create NAT Gateway and assign it with a static IP from Elastic IP
+  nat-eip:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: VPC
+      Tags:
+      - Key: Name
+        Value: !Ref proj-name
+
+  nat-gateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt nat-eip.AllocationId
+      SubnetId: !Ref public-subnet
+      Tags:
+      - Key: Name
+        Value: !Ref proj-name
+
+# Create Route Table for Public Subnet and Private Subnet
+  public-route-table:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref vpc
+      Tags:
+      - Key: Name
+        Value: !Ref proj-name
+
+  public-route:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref public-route-table
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref internet-gateway
+  
+  public-route-association:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref public-subnet
+      RouteTableId: !Ref public-route-table
+
+  private-route-table:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref vpc
+      Tags:
+      - Key: Name
+        Value: !Ref proj-name
+    
+  private-route:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref private-route-table
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref nat-gateway
+  
+  private-route-association:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref private-subnet
+      RouteTableId: !Ref private-route-table
+
+# Export the output
+Outputs:
+  vpc:
+    Value: !Ref vpc
+  default-sg:
+    Value: !Ref default-sg
+  public-sg:
+    Value: !Ref public-sg
+  private-sg:
+    Value: !Ref private-sg
+  public-subnet:
+    Value: !Ref public-subnet
+  private-subnet:
+    Value: !Ref private-subnet
+  internet-gateway:
+    Value: !Ref internet-gateway
+  nat-gateway:
+    Value: !Ref nat-gateway
+  public-route-table:
+    Value: !Ref public-route-table
+  private-route-table:
+    Value: !Ref private-route-table
