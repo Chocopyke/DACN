@@ -26,12 +26,15 @@ output "private_subnet_2_id" {
 output "igw" {
   value = aws_internet_gateway.igw
 }
-output "ngw" {
-  value = aws_nat_gateway.ngw
+output "ngw_1" {
+  value = aws_nat_gateway.ngw_1
+}
+output "ngw_2" {
+  value = aws_nat_gateway.ngw_2
 }
 output "availability_zone_1" {
-  value = data.aws_availability_zones.available.names[0]
+  value = data.aws_availability_zones.available_zones.names[0]
 }
 output "availability_zone_2" {
-  value = data.aws_availability_zones.available.names[1]
+  value = data.aws_availability_zones.available_zones.names[1]
 }

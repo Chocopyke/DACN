@@ -46,7 +46,7 @@ resource "aws_subnet" "private_subnet_1" {
     Name = "${var.proj_name}-${var.environment}-private-subnet-1"
   }
 }
-resource "aws_subnet" "private_subnet" {
+resource "aws_subnet" "private_subnet_2" {
   vpc_id                  = aws_vpc.my_vpc.id
   cidr_block              = var.private_subnet_2_cidr
   availability_zone       = data.aws_availability_zones.available_zones.names[1]
@@ -89,38 +89,64 @@ resource "aws_route_table_association" "public_subnet_2_association" {
 }
 
 #Create NAT Gateway for VPC
-resource "aws_eip" "nat_eip" {
+resource "aws_eip" "nat_eip_1" {
   tags = {
-    Name = "${var.proj_name}-${var.environment}-eip"
+    Name = "${var.proj_name}-${var.environment}-eip-1"
   }
 }
-resource "aws_nat_gateway" "ngw" {
-  allocation_id = aws_eip.nat_eip.id
-  subnet_id     = aws_subnet.public_subnet.id
+resource "aws_eip" "nat_eip_2" {
+  tags = {
+    Name = "${var.proj_name}-${var.environment}-eip-2"
+  }
+}
+resource "aws_nat_gateway" "ngw_1" {
+  allocation_id = aws_eip.nat_eip_1.id
+  subnet_id     = aws_subnet.public_subnet_1.id
 
   tags = {
-    Name = "${var.proj_name}-${var.environment}-ngw"
+    Name = "${var.proj_name}-${var.environment}-ngw-1"
+  }
+}
+resource "aws_nat_gateway" "ngw_2" {
+  allocation_id = aws_eip.nat_eip_2.id
+  subnet_id     = aws_subnet.public_subnet_2.id
+
+  tags = {
+    Name = "${var.proj_name}-${var.environment}-ngw-2"
   }
 }
 
 #Create Private Route Table and routing rules, then connect it to Private Subnet
-resource "aws_route_table" "private_rtb" {
+resource "aws_route_table" "private_rtb_1" {
   vpc_id = aws_vpc.my_vpc.id
 
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.ngw.id
+    nat_gateway_id = aws_nat_gateway.ngw_1.id
   }
 
   tags = {
-    Name = "${var.proj_name}-${var.environment}-private-rtb"
+    Name = "${var.proj_name}-${var.environment}-private-rtb-1"
   }
 }
 resource "aws_route_table_association" "private_subnet_1_association" {
   subnet_id      = aws_subnet.private_subnet_1.id
-  route_table_id = aws_route_table.private_rtb.id
+  route_table_id = aws_route_table.private_rtb_1.id
+}
+
+resource "aws_route_table" "private_rtb_2" {
+  vpc_id = aws_vpc.my_vpc.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.ngw_2.id
+  }
+
+  tags = {
+    Name = "${var.proj_name}-${var.environment}-private-rtb-2"
+  }
 }
 resource "aws_route_table_association" "private_subnet_2_association" {
-  subnet_id      = aws_subnet.private_subnet_1.id
-  route_table_id = aws_route_table.private_rtb.id
+  subnet_id      = aws_subnet.private_subnet_2.id
+  route_table_id = aws_route_table.private_rtb_2.id
 }
