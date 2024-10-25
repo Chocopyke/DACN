@@ -14,26 +14,46 @@ resource "aws_vpc" "my_vpc" {
 data "aws_availability_zones" "available_zones" {}
 
 #Create Public Subnet for VPC
-resource "aws_subnet" "public_subnet" {
+resource "aws_subnet" "public_subnet_1" {
   vpc_id                  = aws_vpc.my_vpc.id
-  cidr_block              = var.public_subnet_cidr
+  cidr_block              = var.public_subnet_1_cidr
   availability_zone       = data.aws_availability_zones.available_zones.names[0]
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "${var.proj_name}-${var.environment}-public-subnet"
+    Name = "${var.proj_name}-${var.environment}-public-subnet-1"
+  }
+}
+resource "aws_subnet" "public_subnet_2" {
+  vpc_id                  = aws_vpc.my_vpc.id
+  cidr_block              = var.public_subnet_2_cidr
+  availability_zone       = data.aws_availability_zones.available_zones.names[1]
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "${var.proj_name}-${var.environment}-public-subnet-2"
   }
 }
 
 #Create Private Subnet for VPC
+resource "aws_subnet" "private_subnet_1" {
+  vpc_id                  = aws_vpc.my_vpc.id
+  cidr_block              = var.private_subnet_1_cidr
+  availability_zone       = data.aws_availability_zones.available_zones.names[0]
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name = "${var.proj_name}-${var.environment}-private-subnet-1"
+  }
+}
 resource "aws_subnet" "private_subnet" {
   vpc_id                  = aws_vpc.my_vpc.id
-  cidr_block              = var.private_subnet_cidr
+  cidr_block              = var.private_subnet_2_cidr
   availability_zone       = data.aws_availability_zones.available_zones.names[1]
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "${var.proj_name}-${var.environment}-private-subnet"
+    Name = "${var.proj_name}-${var.environment}-private-subnet-2"
   }
 }
 
@@ -59,9 +79,12 @@ resource "aws_route_table" "public_rtb" {
     Name = "${var.proj_name}-${var.environment}-public-rtb"
   }
 }
-
-resource "aws_route_table_association" "public_subnet_association" {
-  subnet_id      = aws_subnet.public_subnet.id
+resource "aws_route_table_association" "public_subnet_1_association" {
+  subnet_id      = aws_subnet.public_subnet_1.id
+  route_table_id = aws_route_table.public_rtb.id
+}
+resource "aws_route_table_association" "public_subnet_2_association" {
+  subnet_id      = aws_subnet.public_subnet_2.id
   route_table_id = aws_route_table.public_rtb.id
 }
 
@@ -71,7 +94,6 @@ resource "aws_eip" "nat_eip" {
     Name = "${var.proj_name}-${var.environment}-eip"
   }
 }
-
 resource "aws_nat_gateway" "ngw" {
   allocation_id = aws_eip.nat_eip.id
   subnet_id     = aws_subnet.public_subnet.id
@@ -94,27 +116,11 @@ resource "aws_route_table" "private_rtb" {
     Name = "${var.proj_name}-${var.environment}-private-rtb"
   }
 }
-
-resource "aws_route_table_association" "public_subnet_association" {
-  subnet_id      = aws_subnet.public_subnet.id
-  route_table_id = aws_route_table.public_rtb.id
+resource "aws_route_table_association" "private_subnet_1_association" {
+  subnet_id      = aws_subnet.private_subnet_1.id
+  route_table_id = aws_route_table.private_rtb.id
 }
-
-#Create Default Security Groups for VPC
-resource "aws_security_group" "default-sg" {
-  vpc_id = aws_vpc.my_vpc.id
-
-  ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+resource "aws_route_table_association" "private_subnet_2_association" {
+  subnet_id      = aws_subnet.private_subnet_1.id
+  route_table_id = aws_route_table.private_rtb.id
 }
