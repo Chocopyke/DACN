@@ -1,6 +1,6 @@
 module "vpc" {
   source = "./modules/vpc"
-  proj_name = "dacn_testing"
+  proj_name = "dacn-testing"
   environment = "terraform"
   region = var.region
 
