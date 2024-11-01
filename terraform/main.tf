@@ -10,3 +10,8 @@ module "vpc" {
   private_subnet_1_cidr = "192.168.3.0/24"
   private_subnet_2_cidr = "192.168.4.0/24"
 }
+
+module "ecr" {
+  source = "./modules/ecr"
+  repository_name = "test-dacn"
+}
