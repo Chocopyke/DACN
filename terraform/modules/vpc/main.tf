@@ -102,15 +102,34 @@ resource "aws_route_table_association" "private_subnet_association" {
 #Create Security Group for container
 resource "aws_security_group" "ecs_sg" {
   name = "ecs security group"
-  description = "enable access on port 3000, 3001, 3002, 3003"
+  description = "enable access on port 5173, 3001, 3002, 3003"
   vpc_id = aws_vpc.my_vpc.id
 
 
   ingress{
-    from_port = 0
-    to_port = 0
-    protocol = -1
+    from_port = 5173
+    to_port = 5173
+    protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress{
+    from_port = 3001
+    to_port = 3001
+    protocol = "tcp"
+    cidr_blocks = [aws_subnet.public_subnet.cidr_block]
+  }
+  ingress{
+    from_port = 3002
+    to_port = 3002
+    protocol = "tcp"
+    cidr_blocks = [aws_subnet.public_subnet.cidr_block]
+  }
+  ingress{
+    from_port = 3003
+    to_port = 3003
+    protocol = "tcp"
+    cidr_blocks = [aws_subnet.public_subnet.cidr_block]
   }
 
   egress{
