@@ -11,5 +11,5 @@ module "vpc" {
 
 module "ecr" {
   source = "./modules/ecr"
-  repository_name = "dacn-repo"
+  repository_name = "lamlt-sonvt"
 }
