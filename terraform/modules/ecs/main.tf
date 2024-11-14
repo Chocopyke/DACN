@@ -1,11 +1,9 @@
-# Tạo ECS Cluster
 resource "aws_ecs_cluster" "this" {
   name = var.cluster_name
 }
 
-# Tạo ECS Task Definition
 resource "aws_ecs_task_definition" "this" {
-  family                   = var.family
+  family                   = var.task_family
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = var.cpu
@@ -15,21 +13,26 @@ resource "aws_ecs_task_definition" "this" {
     {
       name      = var.container_name
       image     = var.image
-      cpu       = var.container_cpu
-      memory    = var.container_memory
       essential = true
       portMappings = [
         {
           containerPort = var.container_port
-          hostPort      = var.container_port
+          hostPort      = var.host_port
+          protocol      = var.protocol
         }
       ]
-      environment = var.environment_variables
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = var.log_group_name
+          "awslogs-region"        = var.region
+          "awslogs-stream-prefix" = "ecs"
+        }
+      }
     }
   ])
 }
 
-# Tạo ECS Service
 resource "aws_ecs_service" "this" {
   name            = var.service_name
   cluster         = aws_ecs_cluster.this.id
@@ -38,8 +41,8 @@ resource "aws_ecs_service" "this" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets          = var.subnets
-    security_groups  = var.security_group_id
+    subnets          = var.subnet_ids
+    security_groups  = var.security_group_ids
     assign_public_ip = var.assign_public_ip
   }
 }
