@@ -15,10 +15,10 @@ data "aws_availability_zones" "available_zones" {}
 
 #Create Public Subnet for VPC
 resource "aws_subnet" "public_subnet" {
-  vpc_id                  = aws_vpc.my_vpc.id
-  cidr_block              = var.public_subnet_cidr
+  vpc_id     = aws_vpc.my_vpc.id
+  cidr_block = var.public_subnet_cidr
   # availability_zone       = data.aws_availability_zones.available_zones.names[0]
-  availability_zone = "us-east-1a"
+  availability_zone       = "us-east-1a"
   map_public_ip_on_launch = true
 
   tags = {
@@ -28,10 +28,10 @@ resource "aws_subnet" "public_subnet" {
 
 #Create Private Subnet for VPC
 resource "aws_subnet" "private_subnet" {
-  vpc_id                  = aws_vpc.my_vpc.id
-  cidr_block              = var.private_subnet_cidr
+  vpc_id     = aws_vpc.my_vpc.id
+  cidr_block = var.private_subnet_cidr
   # availability_zone       = data.aws_availability_zones.available_zones.names[0]
-  availability_zone = "us-east-1a"
+  availability_zone       = "us-east-1a"
   map_public_ip_on_launch = false
 
   tags = {
@@ -101,41 +101,53 @@ resource "aws_route_table_association" "private_subnet_association" {
 
 #Create Security Group for container
 resource "aws_security_group" "ecs_sg" {
-  name = "ecs security group"
+  name        = "ecs security group"
   description = "enable access on port 5173, 3001, 3002, 3003"
-  vpc_id = aws_vpc.my_vpc.id
+  vpc_id      = aws_vpc.my_vpc.id
 
 
-  ingress{
-    from_port = 5173
-    to_port = 5173
-    protocol = "tcp"
+  # ingress {
+  #   from_port   = 5173
+  #   to_port     = 5173
+  #   protocol    = "tcp"
+  #   cidr_blocks = ["0.0.0.0/0"]
+  # }
+
+  # ingress {
+  #   from_port   = 3001
+  #   to_port     = 3001
+  #   protocol    = "tcp"
+  #   cidr_blocks = [aws_subnet.public_subnet.cidr_block]
+  # }
+  # ingress {
+  #   from_port   = 3002
+  #   to_port     = 3002
+  #   protocol    = "tcp"
+  #   cidr_blocks = [aws_subnet.public_subnet.cidr_block]
+  # }
+  # ingress {
+  #   from_port   = 3003
+  #   to_port     = 3003
+  #   protocol    = "tcp"
+  #   cidr_blocks = [aws_subnet.public_subnet.cidr_block]
+  # }
+  # ingress {
+  #   from_port   = 9000
+  #   to_port     = 9000
+  #   protocol    = "tcp"
+  #   cidr_blocks = ["0.0.0.0/0"]
+  # }
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress{
-    from_port = 3001
-    to_port = 3001
-    protocol = "tcp"
-    cidr_blocks = [aws_subnet.public_subnet.cidr_block]
-  }
-  ingress{
-    from_port = 3002
-    to_port = 3002
-    protocol = "tcp"
-    cidr_blocks = [aws_subnet.public_subnet.cidr_block]
-  }
-  ingress{
-    from_port = 3003
-    to_port = 3003
-    protocol = "tcp"
-    cidr_blocks = [aws_subnet.public_subnet.cidr_block]
-  }
-
-  egress{
-    from_port = 0
-    to_port = 0
-    protocol = -1
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
     cidr_blocks = ["0.0.0.0/0"]
   }
 

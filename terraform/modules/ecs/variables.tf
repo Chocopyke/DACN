@@ -1,0 +1,16 @@
+variable "region" {}
+variable "cluster_name" {}
+variable "family" {}
+variable "cpu" {}
+variable "memory" {}
+variable "container_name" {}
+variable "container_cpu" {}
+variable "container_memory" {}
+variable "image" {}
+variable "container_port" {}
+variable "desired_count" {}
+variable "environment_variables" {}
+variable "subnets" {}
+variable "security_group_id" {}
+variable "assign_public_ip" {}
+variable "service_name" {}
