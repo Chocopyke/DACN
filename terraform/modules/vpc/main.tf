@@ -102,7 +102,7 @@ resource "aws_route_table_association" "private_subnet_association" {
 #Create Security Group for container
 resource "aws_security_group" "ecs_sg" {
   name        = "ecs security group"
-  description = "enable access on port 5173, 3001, 3002, 3003"
+  description = "enable access on all port"
   vpc_id      = aws_vpc.my_vpc.id
 
 

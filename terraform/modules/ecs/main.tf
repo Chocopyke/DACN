@@ -4,11 +4,11 @@ resource "aws_ecs_cluster" "this" {
 
 resource "aws_ecs_task_definition" "this" {
   family                   = var.task_family
-  network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
   cpu                      = var.cpu
   memory                   = var.memory
-
+  execution_role_arn = "arn:aws:iam::329599660036:role/ecsTaskExecutionRole"
   container_definitions = jsonencode([
     {
       name      = var.container_name
@@ -19,16 +19,20 @@ resource "aws_ecs_task_definition" "this" {
           containerPort = var.container_port
           hostPort      = var.host_port
           protocol      = var.protocol
+
         }
       ]
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          "awslogs-group"         = var.log_group_name
-          "awslogs-region"        = var.region
-          "awslogs-stream-prefix" = "ecs"
-        }
-      }
+      # logConfiguration = {
+      #   logDriver = "awslogs"
+      #   options = {
+      #     awslogs-group         = var.log_group_name
+      #     awslogs-region        = var.region
+      #     awslogs-stream-prefix = "ecs"
+      #     awslogs-create-group  = "true"
+      #     mode                  = "non-blocking"
+      #     max-buffer-size       = "25m"
+      #   }
+      # }
     }
   ])
 }
