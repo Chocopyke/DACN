@@ -20,9 +20,4 @@ jobs:
         with:
           directory: terraform
           framework: terraform
-          
-      - name: Upload SARIF results as artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: checkov-sarif-results
-          path: results.sarif
+        
