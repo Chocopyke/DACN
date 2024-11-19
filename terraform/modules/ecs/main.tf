@@ -22,17 +22,6 @@ resource "aws_ecs_task_definition" "this" {
 
         }
       ]
-      # logConfiguration = {
-      #   logDriver = "awslogs"
-      #   options = {
-      #     awslogs-group         = var.log_group_name
-      #     awslogs-region        = var.region
-      #     awslogs-stream-prefix = "ecs"
-      #     awslogs-create-group  = "true"
-      #     mode                  = "non-blocking"
-      #     max-buffer-size       = "25m"
-      #   }
-      # }
     }
   ])
 }

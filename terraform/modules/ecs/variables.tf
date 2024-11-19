@@ -8,7 +8,6 @@ variable "image" {}
 variable "container_port" {}
 variable "host_port" {}
 variable "protocol" {}
-variable "log_group_name" {}
 variable "service_name" {}
 variable "desired_count" {}
 variable "subnet_ids" {}
