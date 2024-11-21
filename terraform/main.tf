@@ -27,24 +27,24 @@ module "ecr" {
   repository_name = "lamlt-sonvt"
 }
 
-# module "ecs_frontend" {
-#   source             = "./modules/ecs"
-#   region             = "us-east-1"
-#   cluster_name       = "dacn-cluster"
-#   task_family        = "dacn-frontend"
-#   cpu                = "512"
-#   memory             = "1024"
-#   container_name     = "front-end"
-#   image              = "329599660036.dkr.ecr.us-east-1.amazonaws.com/lamlt-sonvt:front-end"
-#   container_port     = 5173
-#   host_port          = 5173
-#   protocol           = "tcp"
-#   service_name       = "front-end"
-#   desired_count      = 1
-#   subnet_ids         = [module.vpc.private_subnet_id]
-#   security_group_ids = [module.vpc.ecs_sg_id]
-#   assign_public_ip   = false
-# }
+module "ecs_frontend" {
+  source             = "./modules/ecs"
+  region             = "us-east-1"
+  cluster_name       = "dacn-cluster"
+  task_family        = "dacn-frontend"
+  cpu                = "512"
+  memory             = "1024"
+  container_name     = "front-end"
+  image              = "329599660036.dkr.ecr.us-east-1.amazonaws.com/lamlt-sonvt:front-end"
+  container_port     = 5173
+  host_port          = 5173
+  protocol           = "tcp"
+  service_name       = "front-end"
+  desired_count      = 1
+  subnet_ids         = [module.vpc.private_subnet_id]
+  security_group_ids = [module.vpc.ecs_sg_id]
+  assign_public_ip   = false
+}
 
 # # module "ecs_backend_cart" {
 # #   source             = "./modules/ecs"
