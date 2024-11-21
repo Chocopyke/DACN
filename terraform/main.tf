@@ -1,50 +1,50 @@
-# module "vpc"{
-#     source  = "terraform-aws-modules/vpc/aws"
+module "vpc"{
+    source  = "terraform-aws-modules/vpc/aws"
 
-#     name = "lmaolmaolmao"
-#     cidr = "192.168.0.0/16"
+    name = "lmaolmaolmao"
+    cidr = "192.168.0.0/16"
 
-#     azs             = ["us-east-1a"]
-#     private_subnets = ["192.168.2.0/24"]
-#     public_subnets  = ["192.168.1.0/24"]
+    azs             = ["us-east-1a"]
+    private_subnets = ["192.168.2.0/24"]
+    public_subnets  = ["192.168.1.0/24"]
 
-#     enable_nat_gateway = false
-# } 
+    enable_nat_gateway = false
+} 
 
-module "vpc" {
-  source      = "./modules/vpc"
-  proj_name   = "dacn-testing"
-  environment = "terraform"
-  region      = var.region
+# module "vpc" {
+#   source      = "./modules/vpc"
+#   proj_name   = "dacn-testing"
+#   environment = "terraform"
+#   region      = var.region
 
-  vpc_cidr            = "192.168.0.0/16"
-  public_subnet_1_cidr  = "192.168.1.0/24"
-  public_subnet_2_cidr = "192.168.3.0/24"
-  private_subnet_cidr = "192.168.2.0/24"
-}
-module "ecr" {
-  source          = "./modules/ecr"
-  repository_name = "lamlt-sonvt"
-}
+#   vpc_cidr            = "192.168.0.0/16"
+#   public_subnet_1_cidr  = "192.168.1.0/24"
+#   public_subnet_2_cidr = "192.168.3.0/24"
+#   private_subnet_cidr = "192.168.2.0/24"
+# }
+# module "ecr" {
+#   source          = "./modules/ecr"
+#   repository_name = "lamlt-sonvt"
+# }
 
-module "ecs_frontend" {
-  source             = "./modules/ecs"
-  region             = "us-east-1"
-  cluster_name       = "dacn-cluster"
-  task_family        = "dacn-frontend"
-  cpu                = "512"
-  memory             = "1024"
-  container_name     = "front-end"
-  image              = "329599660036.dkr.ecr.us-east-1.amazonaws.com/lamlt-sonvt:front-end"
-  container_port     = 5173
-  host_port          = 5173
-  protocol           = "tcp"
-  service_name       = "front-end"
-  desired_count      = 1
-  subnet_ids         = [module.vpc.private_subnet_id]
-  security_group_ids = [module.vpc.ecs_sg_id]
-  assign_public_ip   = true
-}
+# module "ecs_frontend" {
+#   source             = "./modules/ecs"
+#   region             = "us-east-1"
+#   cluster_name       = "dacn-cluster"
+#   task_family        = "dacn-frontend"
+#   cpu                = "512"
+#   memory             = "1024"
+#   container_name     = "front-end"
+#   image              = "329599660036.dkr.ecr.us-east-1.amazonaws.com/lamlt-sonvt:front-end"
+#   container_port     = 5173
+#   host_port          = 5173
+#   protocol           = "tcp"
+#   service_name       = "front-end"
+#   desired_count      = 1
+#   subnet_ids         = [module.vpc.private_subnet_id]
+#   security_group_ids = [module.vpc.ecs_sg_id]
+#   assign_public_ip   = true
+# }
 
 # # module "ecs_backend_cart" {
 # #   source             = "./modules/ecs"
