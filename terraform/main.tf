@@ -43,7 +43,7 @@ module "ecs_frontend" {
   desired_count      = 1
   subnet_ids         = [module.vpc.private_subnet_id]
   security_group_ids = [module.vpc.ecs_sg_id]
-  assign_public_ip   = false
+  assign_public_ip   = true
 }
 
 # # module "ecs_backend_cart" {
