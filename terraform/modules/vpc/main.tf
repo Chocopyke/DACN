@@ -133,19 +133,19 @@ resource "aws_security_group" "ecs_sg" {
   #   from_port   = 3001
   #   to_port     = 3001
   #   protocol    = "tcp"
-  #   cidr_blocks = [aws_subnet.public_subnet.cidr_block]
+  #   cidr_blocks = [aws_subnet.public_subnet_1.cidr_block]
   # }
   # ingress {
   #   from_port   = 3002
   #   to_port     = 3002
   #   protocol    = "tcp"
-  #   cidr_blocks = [aws_subnet.public_subnet.cidr_block]
+  #   cidr_blocks = [aws_subnet.public_subnet_1.cidr_block]
   # }
   # ingress {
   #   from_port   = 3003
   #   to_port     = 3003
   #   protocol    = "tcp"
-  #   cidr_blocks = [aws_subnet.public_subnet.cidr_block]
+  #   cidr_blocks = [aws_subnet.public_subnet_1.cidr_block]
   # }
   # ingress {
   #   from_port   = 9000
