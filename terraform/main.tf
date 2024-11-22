@@ -1,27 +1,15 @@
-module "vpc"{
-    source  = "terraform-aws-modules/vpc/aws"
+module "vpc" {
+  source      = "./modules/vpc"
+  proj_name   = "dacn-testing"
+  environment = "terraform"
+  region      = var.region
 
-    name = "lmaolmaolmao"
-    cidr = "192.168.0.0/16"
+  vpc_cidr            = "192.168.0.0/16"
+  public_subnet_1_cidr  = "192.168.1.0/24"
+  public_subnet_2_cidr = "192.168.3.0/24"
+  private_subnet_cidr = "192.168.2.0/24"
+}
 
-    azs             = ["us-east-1a"]
-    private_subnets = ["192.168.2.0/24"]
-    public_subnets  = ["192.168.1.0/24"]
-
-    enable_nat_gateway = false
-} 
-
-# module "vpc" {
-#   source      = "./modules/vpc"
-#   proj_name   = "dacn-testing"
-#   environment = "terraform"
-#   region      = var.region
-
-#   vpc_cidr            = "192.168.0.0/16"
-#   public_subnet_1_cidr  = "192.168.1.0/24"
-#   public_subnet_2_cidr = "192.168.3.0/24"
-#   private_subnet_cidr = "192.168.2.0/24"
-# }
 # module "ecr" {
 #   source          = "./modules/ecr"
 #   repository_name = "lamlt-sonvt"
