@@ -120,39 +120,7 @@ resource "aws_security_group" "ecs_sg" {
   name        = "ecs security group"
   description = "enable access on all port"
   vpc_id      = aws_vpc.my_vpc.id
-
-
-  # ingress {
-  #   from_port   = 5173
-  #   to_port     = 5173
-  #   protocol    = "tcp"
-  #   cidr_blocks = ["0.0.0.0/0"]
-  # }
-
-  # ingress {
-  #   from_port   = 3001
-  #   to_port     = 3001
-  #   protocol    = "tcp"
-  #   cidr_blocks = [aws_subnet.public_subnet_1.cidr_block]
-  # }
-  # ingress {
-  #   from_port   = 3002
-  #   to_port     = 3002
-  #   protocol    = "tcp"
-  #   cidr_blocks = [aws_subnet.public_subnet_1.cidr_block]
-  # }
-  # ingress {
-  #   from_port   = 3003
-  #   to_port     = 3003
-  #   protocol    = "tcp"
-  #   cidr_blocks = [aws_subnet.public_subnet_1.cidr_block]
-  # }
-  # ingress {
-  #   from_port   = 9000
-  #   to_port     = 9000
-  #   protocol    = "tcp"
-  #   cidr_blocks = ["0.0.0.0/0"]
-  # }
+  
   ingress {
     from_port   = 0
     to_port     = 0
