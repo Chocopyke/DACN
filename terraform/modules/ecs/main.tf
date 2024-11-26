@@ -8,7 +8,7 @@ resource "aws_ecs_task_definition" "this" {
   network_mode             = "awsvpc"
   cpu                      = var.cpu
   memory                   = var.memory
-  execution_role_arn = "arn:aws:iam::329599660036:role/ecsTaskExecutionRole"
+  execution_role_arn       = "arn:aws:iam::329599660036:role/ecsTaskExecutionRole"
   container_definitions = jsonencode([
     {
       name      = var.container_name
