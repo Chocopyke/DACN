@@ -1,15 +1,23 @@
-variable "region" {}
-variable "cluster_name" {}
-variable "task_family" {}
-variable "cpu" {}
-variable "memory" {}
-variable "container_name" {}
-variable "image" {}
-variable "container_port" {}
-variable "host_port" {}
-variable "protocol" {}
-variable "service_name" {}
-variable "desired_count" {}
+variable "cluster_name" {
+}
+
+variable "images" {
+  type = list(object({
+    name             = string
+    image            = string
+    cpu              = string
+    memory           = string
+    container_cpu    = number
+    container_memory = number
+    port_mappings    = list(object({
+      containerPort = number
+      hostPort      = number
+      protocol      = string
+    }))
+    desired_count = number
+  }))
+}
+
 variable "subnet_ids" {}
 variable "security_group_ids" {}
 variable "assign_public_ip" {}
