@@ -1,23 +1,23 @@
-variable "cluster_name" {
+variable "cluster_name" {}
+variable "task_family" {}
+variable "network_mode" {
+  default     = "awsvpc"
 }
-
-variable "images" {
-  type = list(object({
-    name             = string
-    image            = string
-    cpu              = string
-    memory           = string
-    container_cpu    = number
-    container_memory = number
-    port_mappings    = list(object({
-      containerPort = number
-      hostPort      = number
-      protocol      = string
-    }))
-    desired_count = number
-  }))
+variable "requires_compatibilities" {
+  type        = list(string)
+  default     = ["FARGATE"]
 }
-
-variable "subnet_ids" {}
-variable "security_group_ids" {}
-variable "assign_public_ip" {}
+variable "execution_role_arn" {
+  default = "arn:aws:iam::329599660036:role/ecsTaskExecutionRole"
+}
+variable "container_definitions" {}
+variable "service_name" {}
+variable "desired_count" {
+  default     = 1
+}
+variable "launch_type" {
+  default     = "FARGATE"
+}
+variable "target_group_arn" {}
+variable "container_name" {}
+variable "container_port" {}
