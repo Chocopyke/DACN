@@ -17,30 +17,3 @@ module "alb" {
 #   source          = "./modules/ecr"
 #   repository_name = "lamlt-sonvt"
 # }
-
-# module "ecs" {
-#   source = "./modules/ecs"
-#   cluster_name = "dacn"
-#   task_family = "web-application"
-#   container_definitions = [
-#     {
-#       name      = "front-end"
-#       image     = "329599660036.dkr.ecr.us-east-1.amazonaws.com/lamlt-sonvt:front-end"
-#       cpu       = 512
-#       memory    = 1024
-#       essential = true
-#       portMappings = [
-#         {
-#           containerPort = 5173
-#           hostPort      = 5173
-#         }
-#       ]
-#     }
-#   ]
-
-#   service_name           = "test"
-#   launch_type            = "FARGATE"
-#   target_group_arn       = module.alb.target_group_arn
-#   container_name         = "front-end"
-#   container_port         = 5173
-# }

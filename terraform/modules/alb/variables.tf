@@ -24,3 +24,9 @@ variable "listener_protocol" {
 variable "target_type" {
   default = "ip"
 }
+variable "health_check_port" {
+  default = "traffic-port"
+}
+variable "matcher_code" {
+  default = "200-499"
+}

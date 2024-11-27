@@ -25,7 +25,8 @@ resource "aws_lb_target_group" "target_alb" {
   target_type = var.target_type
   health_check {
     path     = "/"
-    port     = var.target_group_port
+    port     = var.health_check_port
     protocol = var.target_group_protocol
+    matcher = var.matcher_code
   }
 }
