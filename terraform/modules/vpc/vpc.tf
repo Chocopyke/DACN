@@ -62,57 +62,57 @@ resource "aws_route_table_association" "public_subnet_2_association" {
   route_table_id = aws_route_table.public_rtb.id
 }
 
-# resource "aws_subnet" "private_subnet_1" {
-#   vpc_id                  = aws_vpc.dacn_vpc.id
-#   cidr_block              = var.private_subnet_1_cidr
-#   availability_zone       = data.aws_availability_zones.available_zones.names[0]
-#   map_public_ip_on_launch = false
+resource "aws_subnet" "private_subnet_1" {
+  vpc_id                  = aws_vpc.dacn_vpc.id
+  cidr_block              = var.private_subnet_1_cidr
+  availability_zone       = data.aws_availability_zones.available_zones.names[0]
+  map_public_ip_on_launch = false
 
-#   tags = {
-#     Name = "${var.name}-private-subnet-1"
-#   }
-# }
+  tags = {
+    Name = "${var.name}-private-subnet-1"
+  }
+}
 
-# resource "aws_eip" "nat_eip" {
-#   tags = {
-#     Name = "${var.name}-eip"
-#   }
-# }
-# resource "aws_nat_gateway" "ngw_1" {
-#   allocation_id = aws_eip.nat_eip.id
-#   subnet_id     = aws_subnet.public_subnet_1.id
+resource "aws_eip" "nat_eip" {
+  tags = {
+    Name = "${var.name}-eip"
+  }
+}
+resource "aws_nat_gateway" "ngw_1" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id     = aws_subnet.public_subnet_1.id
 
-#   tags = {
-#     Name = "${var.name}-ngw"
-#   }
-# }
-# resource "aws_route_table" "private_rtb" {
-#   vpc_id = aws_vpc.dacn_vpc.id
+  tags = {
+    Name = "${var.name}-ngw"
+  }
+}
+resource "aws_route_table" "private_rtb" {
+  vpc_id = aws_vpc.dacn_vpc.id
 
-#   route {
-#     cidr_block     = "0.0.0.0/0"
-#     nat_gateway_id = aws_nat_gateway.ngw_1.id
-#   }
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.ngw_1.id
+  }
 
-#   tags = {
-#     Name = "${var.name}-private-rtb"
-#   }
-# }
-# resource "aws_route_table_association" "private_subnet_1_association" {
-#   subnet_id      = aws_subnet.private_subnet_1.id
-#   route_table_id = aws_route_table.private_rtb.id
-# }
+  tags = {
+    Name = "${var.name}-private-rtb"
+  }
+}
+resource "aws_route_table_association" "private_subnet_1_association" {
+  subnet_id      = aws_subnet.private_subnet_1.id
+  route_table_id = aws_route_table.private_rtb.id
+}
 
 resource "aws_security_group" "dacn_sg" {
-  name        = "ecs security group"
+  name        = "dacn security group"
   description = "enable access on all port"
   vpc_id      = aws_vpc.dacn_vpc.id
 
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = -1
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 5173
+    to_port     = 5173
+    protocol    = "tcp"
+    cidr_blocks = [aws_subnet.public_subnet_1.cidr_block, aws_subnet.public_subnet_2.cidr_block]
   }
 
   egress {
