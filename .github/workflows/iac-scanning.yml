@@ -1,4 +1,4 @@
-name: checkov
+name: Checkov IaC Scanning
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   checkov-scan:
-    name: Run Checkov Scan on Specific Folder
+    name: Checkov IaC Scanning
     runs-on: ubuntu-latest
 
     steps:
