@@ -1,0 +1,29 @@
+name: checkov
+
+on:
+  push:
+    branches: 
+      - terraform
+    paths-ignore:
+      - '.gitignore'
+      - 'README.md'
+
+jobs:
+  checkov-scan:
+    name: Run Checkov Scan on Specific Folder
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Checkov
+        run: pip install checkov
+
+      - name: Run Checkov on 'terraform' folder
+        run: checkov -d ./terraform
