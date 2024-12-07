@@ -4,6 +4,8 @@ resource "aws_lb" "dacn_alb" {
   load_balancer_type = var.lb_type
   security_groups    = var.security_group_ids
   subnets            = var.subnet_ids
+  drop_invalid_header_fields = true
+  enable_deletion_protection = false
 }
 
 resource "aws_lb_listener" "listener" {
