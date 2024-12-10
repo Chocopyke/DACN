@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  all-services:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+      - "3002:3002"
+      - "3003:3003"
+      - "5173:5173"
