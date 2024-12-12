@@ -1,28 +1,18 @@
-variable "name" {}
-variable "internal" {
-  default = false
+variable "alb_name" {
+  type        = string
 }
-variable "lb_type" {
-  default = "application"
+variable "vpc_id" {
+  type        = string
 }
-variable "security_group_ids" {}
-variable "subnet_ids" {}
-
-variable "vpc_id" {}
-variable "target_group_port" {
-  default = 80
+variable "subnets" {
+  type        = list(string)
 }
-variable "target_group_protocol" {
-  default = "HTTP"
+variable "security_groups" {
+  type        = list(string)
 }
-variable "listener_port" {
-  default = 80
-}
-variable "listener_protocol" {
-  default = "HTTP"
-}
-variable "target_type" {
-  default = "ip"
+variable "enable_deletion_protection" {
+  type        = bool
+  default     = false
 }
 variable "health_check_port" {
   default = "traffic-port"

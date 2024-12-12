@@ -1,3 +1,4 @@
+#Create VPC
 resource "aws_vpc" "dacn_vpc" {
   cidr_block           = var.vpc_cidr
   instance_tenancy     = "default"
@@ -9,8 +10,12 @@ resource "aws_vpc" "dacn_vpc" {
   }
 }
 
+
+#Get availability zone data
 data "aws_availability_zones" "available_zones" {}
 
+
+#Create public subnets
 resource "aws_subnet" "public_subnet_1" {
   vpc_id                  = aws_vpc.dacn_vpc.id
   cidr_block              = var.public_subnet_1_cidr
@@ -32,6 +37,8 @@ resource "aws_subnet" "public_subnet_2" {
   }
 }
 
+
+#Create internet gateway
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.dacn_vpc.id
 
@@ -40,6 +47,8 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
+
+#Create public route table for public subnets
 resource "aws_route_table" "public_rtb" {
   vpc_id = aws_vpc.dacn_vpc.id
 
@@ -56,12 +65,13 @@ resource "aws_route_table_association" "public_subnet_1_association" {
   subnet_id      = aws_subnet.public_subnet_1.id
   route_table_id = aws_route_table.public_rtb.id
 }
-
 resource "aws_route_table_association" "public_subnet_2_association" {
   subnet_id      = aws_subnet.public_subnet_2.id
   route_table_id = aws_route_table.public_rtb.id
 }
 
+
+#Create private subnets
 resource "aws_subnet" "private_subnet_1" {
   vpc_id                  = aws_vpc.dacn_vpc.id
   cidr_block              = var.private_subnet_1_cidr
@@ -72,26 +82,61 @@ resource "aws_subnet" "private_subnet_1" {
     Name = "${var.name}-private-subnet-1"
   }
 }
+resource "aws_subnet" "private_subnet_2" {
+  vpc_id                  = aws_vpc.dacn_vpc.id
+  cidr_block              = var.private_subnet_2_cidr
+  availability_zone       = data.aws_availability_zones.available_zones.names[1]
+  map_public_ip_on_launch = false
 
-resource "aws_eip" "nat_eip" {
   tags = {
-    Name = "${var.name}-eip"
+    Name = "${var.name}-private-subnet-2"
   }
 }
+
+
+#Create public eip for NAT Gateway
+resource "aws_eip" "nat_eip_1" {
+  tags = {
+    Name = "${var.name}-eip-1"
+  }
+}
+resource "aws_eip" "nat_eip_2" {
+  tags = {
+    Name = "${var.name}-eip-2"
+  }
+}
+
+
+#Create NAT Gateways for each private subnet
 resource "aws_nat_gateway" "ngw_1" {
-  allocation_id = aws_eip.nat_eip.id
+  allocation_id = aws_eip.nat_eip_1.id
   subnet_id     = aws_subnet.public_subnet_1.id
 
   tags = {
-    Name = "${var.name}-ngw"
+    Name = "${var.name}-ngw-1"
   }
 }
+resource "aws_nat_gateway" "ngw_2" {
+  allocation_id = aws_eip.nat_eip_2.id
+  subnet_id     = aws_subnet.public_subnet_2.id
+
+  tags = {
+    Name = "${var.name}-ngw-2"
+  }
+}
+
+
+#Create private route table for private subnets
 resource "aws_route_table" "private_rtb" {
   vpc_id = aws_vpc.dacn_vpc.id
 
   route {
-    cidr_block     = "0.0.0.0/0"
+    cidr_block     = var.public_subnet_1_cidr
     nat_gateway_id = aws_nat_gateway.ngw_1.id
+  }
+  route {
+    cidr_block     = var.public_subnet_2_cidr
+    nat_gateway_id = aws_nat_gateway.ngw_2.id
   }
 
   tags = {
@@ -102,23 +147,22 @@ resource "aws_route_table_association" "private_subnet_1_association" {
   subnet_id      = aws_subnet.private_subnet_1.id
   route_table_id = aws_route_table.private_rtb.id
 }
+resource "aws_route_table_association" "private_subnet_2_association" {
+  subnet_id      = aws_subnet.private_subnet_2.id
+  route_table_id = aws_route_table.private_rtb.id
+}
 
-resource "aws_security_group" "dacn_sg" {
+
+#Create default security group
+resource "aws_security_group" "dacn_default_sg" {
   name        = "dacn security group"
   description = "enable access on all port"
   vpc_id      = aws_vpc.dacn_vpc.id
 
   ingress {
-    from_port   = 5173
-    to_port     = 5173
-    protocol    = "tcp"
-    cidr_blocks = [aws_subnet.public_subnet_1.cidr_block, aws_subnet.public_subnet_2.cidr_block]
-  }
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -130,6 +174,6 @@ resource "aws_security_group" "dacn_sg" {
   }
 
   tags = {
-    Name = "${var.name}-sg"
+    Name = "${var.name}-default-sg"
   }
 }

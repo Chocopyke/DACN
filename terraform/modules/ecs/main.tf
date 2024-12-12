@@ -8,7 +8,7 @@ resource "aws_ecs_task_definition" "this" {
   requires_compatibilities = ["FARGATE"]
   cpu                      = var.cpu
   memory                   = var.memory
-  execution_role_arn = "arn:aws:iam::329599660036:role/ecsTaskExecutionRole"
+  execution_role_arn       = "arn:aws:iam::329599660036:role/ecsTaskExecutionRole"
   container_definitions = jsonencode([
     {
       name      = var.container_name
@@ -30,7 +30,7 @@ resource "aws_ecs_service" "this" {
   task_definition = aws_ecs_task_definition.this.arn
   desired_count   = var.desired_count
   launch_type     = "FARGATE"
-  
+
   network_configuration {
     subnets          = var.subnets
     security_groups  = var.security_group_id
@@ -39,7 +39,7 @@ resource "aws_ecs_service" "this" {
 
   load_balancer {
     target_group_arn = var.target_group_arn
-    container_name = var.container_name
-    container_port = var.container_port
+    container_name   = var.container_name
+    container_port   = var.container_port
   }
 }
