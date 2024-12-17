@@ -1,10 +1,10 @@
 #Create internet-facing alb and internal alb
 resource "aws_lb" "internet_alb" {
-  name               = "${var.alb_name}-internet-alb"
+  name               = "dacn-internet-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = var.security_groups
-  subnets            = var.subnets
+  subnets            = var.internet_alb_subnets
 
   enable_deletion_protection = var.enable_deletion_protection
 
@@ -13,11 +13,11 @@ resource "aws_lb" "internet_alb" {
   }
 }
 resource "aws_lb" "internal_alb" {
-  name               = "${var.alb_name}-internal-alb"
+  name               = "dacn-internal-alb"
   internal           = true
   load_balancer_type = "application"
   security_groups    = var.security_groups
-  subnets            = var.subnets
+  subnets            = var.internal_alb_subnets
 
   enable_deletion_protection = var.enable_deletion_protection
 
@@ -30,7 +30,7 @@ resource "aws_lb" "internal_alb" {
 
 #Create target group for each service
 resource "aws_lb_target_group" "front_end_target_group" {
-  name        = "${var.alb_name}-front-end-target-group"
+  name        = "front-end"
   port        = 5173
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
@@ -40,11 +40,11 @@ resource "aws_lb_target_group" "front_end_target_group" {
     path     = "/"
     port     = var.health_check_port
     protocol = "HTTP"
-    matcher = var.matcher_code
+    matcher  = var.matcher_code
   }
 }
 resource "aws_lb_target_group" "cart_service_target_group" {
-  name        = "${var.alb_name}-cart-service-target-group"
+  name        = "cart-service"
   port        = 3003
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
@@ -54,11 +54,11 @@ resource "aws_lb_target_group" "cart_service_target_group" {
     path     = "/"
     port     = var.health_check_port
     protocol = "HTTP"
-    matcher = var.matcher_code
+    matcher  = var.matcher_code
   }
 }
 resource "aws_lb_target_group" "product_service_target_group" {
-  name        = "${var.alb_name}-product-service-target-group"
+  name        = "product-service"
   port        = 3002
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
@@ -68,11 +68,11 @@ resource "aws_lb_target_group" "product_service_target_group" {
     path     = "/"
     port     = var.health_check_port
     protocol = "HTTP"
-    matcher = var.matcher_code
+    matcher  = var.matcher_code
   }
 }
 resource "aws_lb_target_group" "user_service_target_group" {
-  name        = "${var.alb_name}-user-service-target-group"
+  name        = "user-service"
   port        = 3001
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
@@ -82,7 +82,7 @@ resource "aws_lb_target_group" "user_service_target_group" {
     path     = "/"
     port     = var.health_check_port
     protocol = "HTTP"
-    matcher = var.matcher_code
+    matcher  = var.matcher_code
   }
 }
 
@@ -119,13 +119,13 @@ resource "aws_lb_listener" "product_service_listener" {
     target_group_arn = aws_lb_target_group.product_service_target_group.arn
   }
 }
-resource "aws_lb_listener" "cart_service_listener" {
+resource "aws_lb_listener" "user_service_listener" {
   load_balancer_arn = aws_lb.internal_alb.arn
   port              = 3001
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.cart_service_target_group.arn
+    target_group_arn = aws_lb_target_group.user_service_target_group.arn
   }
 }

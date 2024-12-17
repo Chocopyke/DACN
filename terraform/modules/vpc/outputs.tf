@@ -16,11 +16,8 @@ output "private_subnet_2_id" {
 output "igw" {
   value = aws_internet_gateway.igw
 }
-output "ngw_1" {
-  value = aws_nat_gateway.ngw_1
-}
-output "ngw_2" {
-  value = aws_nat_gateway.ngw_2
+output "ngw" {
+  value = aws_nat_gateway.ngw
 }
 output "dacn_sg_id" {
   value = aws_security_group.dacn_default_sg.id

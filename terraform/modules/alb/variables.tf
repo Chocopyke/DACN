@@ -1,18 +1,21 @@
 variable "alb_name" {
-  type        = string
+  type = string
 }
 variable "vpc_id" {
-  type        = string
+  type = string
 }
-variable "subnets" {
-  type        = list(string)
+variable "internet_alb_subnets" {
+  type = list(string)
+}
+variable "internal_alb_subnets" {
+  type = list(string)
 }
 variable "security_groups" {
-  type        = list(string)
+  type = list(string)
 }
 variable "enable_deletion_protection" {
-  type        = bool
-  default     = false
+  type    = bool
+  default = false
 }
 variable "health_check_port" {
   default = "traffic-port"
