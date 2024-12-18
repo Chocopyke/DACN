@@ -1,6 +1,6 @@
 resource "aws_eks_cluster" "demo" {
   name     = "demo"
-  role_arn = "arn:aws:iam::026922087570:role/LabRole"
+  role_arn = "arn:aws:iam::329599660036:role/EKS-test"
 
   vpc_config {
     subnet_ids = [

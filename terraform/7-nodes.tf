@@ -5,7 +5,7 @@
 resource "aws_eks_node_group" "private-nodes" {
   cluster_name    = aws_eks_cluster.demo.name
   node_group_name = "private-nodes"
-  node_role_arn   = "arn:aws:iam::026922087570:role/LabRole"
+  node_role_arn   = "arn:aws:iam::329599660036:role/EKS-test"
 
   subnet_ids = [
     aws_subnet.private_us_east_1a.id,
