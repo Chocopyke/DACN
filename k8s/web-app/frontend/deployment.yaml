@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: main-application
+spec:
+  selector:
+    matchLabels:
+      run: frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: 329599660036.dkr.ecr.us-east-1.amazonaws.com/lamlt-sonvt:front-end
+          ports:
+            - containerPort: 80
+            - containerPort: 5483
+            - containerPort: 443
+

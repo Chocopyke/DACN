@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+      - name: user-service
+        image: <your-user-service-image>:latest
+        ports:
+        - containerPort: 3001
+        envFrom:
+        - secretRef:
+            name: be-secrets
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: product-service
+  template:
+    metadata:
+      labels:
+        app: product-service
+    spec:
+      containers:
+      - name: product-service
+        image: <your-product-service-image>:latest
+        ports:
+        - containerPort: 3002
+        envFrom:
+        - secretRef:
+            name: be-secrets
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cart-service
+  template:
+    metadata:
+      labels:
+        app: cart-service
+    spec:
+      containers:
+      - name: cart-service
+        image: <your-cart-service-image>:latest
+        ports:
+        - containerPort: 3003
+        envFrom:
+        - secretRef:
+            name: be-secrets
