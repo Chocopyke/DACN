@@ -1,7 +1,7 @@
 # Local .terraform directories
 **/.terraform/*
 *.env
-
+E-Commerce_Web_Application
 # .tfstate files
 *.tfstate
 *.tfstate.*
