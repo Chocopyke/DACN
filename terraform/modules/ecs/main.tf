@@ -50,9 +50,32 @@ resource "aws_ecs_task_definition" "product_service_task" {
           hostPort      = 3002
         }
       ]
+      environment = [
+        {
+          name  = "MONGO_USERNAME"
+          value = "21521052"
+        },
+        {
+          name  = "MONGO_PASSWORD"
+          value = "aspirine2911"
+        },
+        {
+          name  = "MONGO_CLUSTER"
+          value = "Cluster0"
+        },
+        {
+          name  = "MONGO_DBNAME"
+          value = "devops"
+        },
+        {
+          name  = "ACCESS_TOKEN"
+          value = "123415123asf12312"
+        }
+      ]
     }
   ])
 }
+
 resource "aws_ecs_task_definition" "cart_service_task" {
   family = "cart-service"
   requires_compatibilities = ["FARGATE"]
@@ -72,6 +95,28 @@ resource "aws_ecs_task_definition" "cart_service_task" {
         {
           containerPort = 3003  
           hostPort      = 3003
+        }
+      ]
+      environment = [
+        {
+          name  = "MONGO_USERNAME"
+          value = "21521052"
+        },
+        {
+          name  = "MONGO_PASSWORD"
+          value = "aspirine2911"
+        },
+        {
+          name  = "MONGO_CLUSTER"
+          value = "Cluster0"
+        },
+        {
+          name  = "MONGO_DBNAME"
+          value = "devops"
+        },
+        {
+          name  = "ACCESS_TOKEN"
+          value = "123415123asf12312"
         }
       ]
     }
@@ -96,6 +141,28 @@ resource "aws_ecs_task_definition" "user_service_task" {
         {
           containerPort = 3001
           hostPort      = 3001
+        }
+      ]
+      environment = [
+        {
+          name  = "MONGO_USERNAME"
+          value = "21521052"
+        },
+        {
+          name  = "MONGO_PASSWORD"
+          value = "aspirine2911"
+        },
+        {
+          name  = "MONGO_CLUSTER"
+          value = "Cluster0"
+        },
+        {
+          name  = "MONGO_DBNAME"
+          value = "devops"
+        },
+        {
+          name  = "ACCESS_TOKEN"
+          value = "123415123asf12312"
         }
       ]
     }
